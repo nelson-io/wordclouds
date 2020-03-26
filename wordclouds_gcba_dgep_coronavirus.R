@@ -1,44 +1,17 @@
 #Activamos librerías
 library(tidyverse)
 library(wordcloud2)
-library(tidytext)
+library(ggwordcloud)
 
 
 #importamos los datos
 
-texto <- readLines("test_text.txt")
-splited <- strsplit(texto, " ") %>% unlist() %>% as.data.frame() %>% rename(word=1) %>% 
-  mutate(word = as.character(word))
 
-tokenized <- unnest_tokens(tbl = splited, output = "tokenized", input = "word" )
+data <-  readRDS("splited.Rds")
 
-antijoined <- anti_join(tokenized,stop_words, by = c("tokenized" = "word"))
+#hacemos wordcloud
 
-
-data_table <- table(antijoined) %>% data.frame() %>% 
-  arrange(desc(Freq))
+wordcloud2(data, size = .5,figPath = "t3.png", color='random-light',backgroundColor = "black")
 
 
-# alimentamos stopword
-
-stop_words_c <- 
-stop_words %>% bind_rows(tribble(
-  ~word, ~lexicon,
-  "de", "custom",
-  "la","custom",
-  "el","custom",
-  "del","custom",
-  "en","custom",
-  "al","custom"
-  
-))
-
-#corremos nuevamente
-
-
-antijoined <- anti_join(tokenized,stop_words_c, by = c("tokenized" = "word"))
-
-
-data_table <- table(antijoined) %>% data.frame() %>% 
-  arrange(desc(Freq))
 
